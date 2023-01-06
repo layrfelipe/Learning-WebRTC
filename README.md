@@ -18,4 +18,9 @@ Then, run `npm start` to initialize the React app
 
 ## PS
 Don't use Chrome to run the application because starting on version 47, secure origins (HTTPS) is required for getUserMedia method\
-So far I have been using Edge and it works fine
+So far I have been using Edge and it works fine\
+
+## Next steps
+Separate folders for client and server\
+More than 2 peers connected
+Containerize application
