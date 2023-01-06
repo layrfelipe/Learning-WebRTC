@@ -2,57 +2,55 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: sans-serif;
 }
 
 .app {
     width: 100%;
     height: 100vh;
-    background: white;
-    color: black;
-    display: flex;
-}
-
-.app-wrapper {
-    width: 100%;
+    background: black;
+    color: white;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding-top: 1vw;
-    padding-left: 1vw;
+    align-items: center;
+    padding: 10vh 0;
+}
+
+h1 {
+    font-size: 3rem;
 }
 
 .video-wrappers {
     display: flex;
+    justify-content: space-between;
+    width: 75%;
+    margin-top: 5vh;
 }
 
 .video {
-    border: 1px solid red;
-    width: 240px;
+    border: 3px solid red;
+    width: 480px;
 }
 
-#remote {
-    margin-left: 2vw;
-}
-
-.button-wrappers {
-    margin-top: 5vh;
-    display: flex;
+.status {
+    margin-top: 7.5vh;
+    font-size: 2rem;
 }
 
 .button {
-    background: black;
+    background: none;
+    border: 3px solid white;
     color: white;
-    padding: 1vw;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: .5rem 5rem;
+    margin-top: 3vh;
     border-radius: .5rem;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1.25rem;
+    transition: .3s ease-in-out;
 }
 
-#answer {
-    margin-left: 1vw;
-}
-
-.sdpTextArea {
-    margin-top: 5vh;
+.button:hover {
+    background: white;
+    color: black;
 }
