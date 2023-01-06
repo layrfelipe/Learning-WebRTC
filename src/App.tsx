@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import "./App.css";
 
+// initializing socket with namespace defined on signalling server
 const socket = io(
   "/webRTCPeers",
   {
@@ -12,33 +13,45 @@ const socket = io(
 function App() {
   const localVideoRef = useRef<any>();
   const remoteVideoRef = useRef<any>();
-  const pc = useRef<any>();
+  const pc = useRef<any>(); // peer connection
 
+
+  // managing visibility of components with states
   const [ offerVisible, setOfferVisible ] = useState(true)
   const [ answerVisible, setAnswerVisible ] = useState(true)
   const [ status, setStatus ] = useState("Make a call now")
 
+
+  // only on first render (no deps)
   useEffect(() => {
     socket.on("connection-success", success => {
       console.log(success);
     })
 
+    // immediately sets incoming remote SDP incoming from signalling server
     socket.on("sdp", data => {
       pc.current.setRemoteDescription(new RTCSessionDescription(data.sdp))
-      if(data.sdp.type === "offer") {
+      if (data.sdp.type === "offer") {
+        // if comes an offer, user should press "Answer"
         setOfferVisible(false);
         setAnswerVisible(true);
         setStatus("Incoming call...");
       }
-      else {
+      // if comes an answer, the call is set
+      else if (data.type.sdp === "answer") {
         setStatus("Call established");
       }
     })
 
+    // immediately sets new candidate (incoming from signalling server)
     socket.on("candidate", candidate => {
       pc.current.addIceCandidate(new RTCIceCandidate(candidate))
     })
 
+    // defines new connection
+    const _pc = new RTCPeerConnection();
+
+    // gets access to mic and camera and binds them to HTML element video
     navigator.mediaDevices.getUserMedia({ audio: false, video: true })
       .then((stream) => {
         localVideoRef.current.srcObject = stream;
@@ -48,8 +61,7 @@ function App() {
       })
       .catch(e => console.log("getUserMedia error...", e));
 
-    const _pc = new RTCPeerConnection();
-
+    // new ice candidate event
     _pc.onicecandidate = (e) => {
       if (e.candidate) {
         sendToPeer("candidate", e.candidate);
@@ -64,18 +76,24 @@ function App() {
       remoteVideoRef.current.srcObject = e.streams[0];
     };
 
+    // binds ref to connection
     pc.current = _pc;
 
   }, []);
 
+
+  // takes an ice candidate or a sdp and emits an event
   const sendToPeer = (eventType: any, payload: any) => {
     socket.emit(eventType, payload)
   }
 
+
+  // sets local SDP when an offer (made by caller peer) or an answer (made by callee peer)
   const processSDP = (sdp: any) => {
     pc.current.setLocalDescription(sdp);
     sendToPeer("sdp", { sdp });
   }
+
 
   const createOffer = () => {
     pc.current.createOffer({
@@ -90,6 +108,7 @@ function App() {
       .catch((e: any) => console.log(e));
   }
 
+
   const createAnswer = () => {
     pc.current.createAnswer({
       offerToReceiveAudio: 0,
@@ -103,22 +122,25 @@ function App() {
       .catch((e: any) => console.log(e));
   }
 
+
+  // manage through react states the UI action buttons
   const showHideButtons = () => {
     if(offerVisible) {
       return (
-        <div>
+        <>
           <button className="button" onClick={createOffer}>Call</button>
-        </div>
+        </>
       )
     }
     else if (answerVisible && status === "Incoming call...") {
       return (
-        <div>
-          <button className="button" onClick={createAnswer}>Answer</button>
-        </div>
+          <>
+            <button className="button" onClick={createAnswer}>Answer</button>
+          </>
       )
     }
   }
+
 
   return (
     <div className="app">
@@ -132,5 +154,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
