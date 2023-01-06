@@ -22,5 +22,5 @@ So far I have been using Edge and it works fine\
 
 ## Next steps
 Separate folders for client and server\
-More than 2 peers connected
+More than 2 peers connected\
 Containerize application
