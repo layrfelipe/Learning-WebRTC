@@ -15,3 +15,7 @@ Open 2 instances on your terminal: one for the client and another one for the si
 
 First, run `npm run socket` to start the server
 Then, run `npm start` to initialize the React app
+
+## PS
+Don't use Chrome to run the application because starting on version 47, secure origins (HTTPS) is required for getUserMedia method
+So far I have been using Edge and it works fine
